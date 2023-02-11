@@ -5,8 +5,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:spotify_clone/utils/constants.dart';
 
+class songDetails{
+  String name;
+  String artistName;
+  String link;
+  songDetails(this.name,this.artistName,this.link);
+}
+
 class SpotifyApi {
   static var token = '';
+
+  static List<songDetails> trackLinks = [];
 
   Dio dio = Dio();
 
@@ -22,7 +31,7 @@ class SpotifyApi {
     var data = {"grant_type": "client_credentials"};
     try {
       Response result =
-          await dio.post(url, data: data, options: Options(headers: headers));
+      await dio.post(url, data: data, options: Options(headers: headers));
       Map map = result.data;
       token = map['access_token'];
       return map['access_token'];
@@ -42,11 +51,12 @@ class SpotifyApi {
     try {
       Response response = await dio.get(
         "https://api.spotify.com/v1/search",
-        queryParameters: {"q": trackName, "type": "track", "limit": 2},
+        queryParameters: {"q": trackName, "type": "track",},
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
       var tracks = response.data["tracks"]["items"];
+      //trackLinks.clear();
       for(var track in tracks){
         log('TRACKID: ${track["id"]}');
         getTrack(track["id"]);
@@ -73,6 +83,7 @@ class SpotifyApi {
       Response response = await dio.get("tracks/$trackId");
 
       String trackLink = response.data["external_urls"]["spotify"];
+      trackLinks.add(songDetails(response.data['name'], response.data['artists'][0]['name'], trackLink));
       log("Track link: $trackLink");
     } catch (error) {
       log("$error");
