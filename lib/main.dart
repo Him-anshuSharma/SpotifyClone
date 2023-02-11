@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:spotify_clone/repository/spotifyAPI.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -88,7 +89,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     textColor: Colors.white,
                     onPressed: () async {
                       SpotifyApi.trackLinks.clear();
-                      print("TRACK $trackName");
+                      if (kDebugMode) {
+                        print("TRACK $trackName");
+                      }
                       await api.getTrackId(trackName).then((_){
                         setState(() {
                         });

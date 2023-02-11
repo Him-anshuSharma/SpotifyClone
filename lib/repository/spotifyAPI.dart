@@ -1,21 +1,20 @@
-import 'dart:convert' show Codec, base64, json, utf8;
+import 'dart:convert' show Codec, base64, utf8;
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:spotify_clone/utils/constants.dart';
 
-class songDetails{
+class SongDetails{
   String name;
   String artistName;
   String link;
-  songDetails(this.name,this.artistName,this.link);
+  SongDetails(this.name,this.artistName,this.link);
 }
 
 class SpotifyApi {
   static var token = '';
 
-  static List<songDetails> trackLinks = [];
+  static List<SongDetails> trackLinks = [];
 
   Dio dio = Dio();
 
@@ -56,9 +55,7 @@ class SpotifyApi {
       );
 
       var tracks = response.data["tracks"]["items"];
-      //trackLinks.clear();
       for(var track in tracks){
-        log('TRACKID: ${track["id"]}');
         getTrack(track["id"]);
       }
       return tracks[0]["id"].toString();
@@ -83,7 +80,7 @@ class SpotifyApi {
       Response response = await dio.get("tracks/$trackId");
 
       String trackLink = response.data["external_urls"]["spotify"];
-      trackLinks.add(songDetails(response.data['name'], response.data['artists'][0]['name'], trackLink));
+      trackLinks.add(SongDetails(response.data['name'], response.data['artists'][0]['name'], trackLink));
       log("Track link: $trackLink");
     } catch (error) {
       log("$error");
